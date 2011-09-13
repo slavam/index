@@ -1,0 +1,14 @@
+# coding: utf-8
+%h1 Группы направления "#{@direction.name}" 
+
+.content
+  %table.data
+    %tr
+      %th Название
+    - for b in @direction.blocks
+      %tr
+        %td= link_to b.name, :action => 'show_eigen_subblocks', :block_id => b 
+%br	
+.actions
+  = link_to 'Добавить группу', :controller => 'blocks', :action => 'new', :direction_id => @direction
+  -#= link_to 'Добавить группу', :controller => 'blocks', :action => 'new_block', :direction_id => @direction

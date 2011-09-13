@@ -1,0 +1,9 @@
+%h1 Новая группа направления "#{@direction.name}"
+.content
+  - form_for @block, :url => {:action => "create", :direction_id => @direction} do |form|
+    %table.card
+      %tr
+        %th Название
+        %td= form.text_field :name
+      %br
+    = submit_tag "Сохранить"

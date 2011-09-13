@@ -1,0 +1,13 @@
+# coding: utf-8
+%h1 Подгруппы группы "#{@block.name}" направления "#{@block.direction.name}" 
+
+.content
+  %table.data
+    %tr
+      %th Название
+    - for sb in @block.subblocks
+      %tr
+        %td= link_to sb.name, :action => 'show_eigen_factors', :subblock_id => sb 
+%br	
+.actions
+  = link_to 'Добавить подгруппу', :controller => 'subblocks', :action => 'new', :block_id => @block
