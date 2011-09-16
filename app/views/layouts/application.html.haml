@@ -28,7 +28,9 @@
               = render :partial => 'layouts/menuItem', :collection => [ |
                 ['Отделения',  divisions_path], |
                 ['Направления',  directions_path], |
-                ['Показатели', factor_descriptions_path] |
+                ['Показатели', factor_descriptions_path], |
+                ['Просмотр рейтинга',  :controller => 'ratings', :action => 'get_rating_params'], |
+                ['Расчет рейтинга',  :controller => 'ratings', :action => 'get_calc_params'] |
               ] |
             - 
             -##div{'style' => "float: left;margin-left: 30px"}

@@ -1,0 +1,9 @@
+%h1 Новая подгруппа группы "#{@block.name}" направления "#{@block.direction.name}"
+.content
+  - form_for @subblock, :url => {:action => "create", :block_id => @block} do |form|
+    %table.card
+      %tr
+        %th Название
+        %td= form.text_field :name
+      %br
+    = submit_tag "Сохранить"

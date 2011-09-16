@@ -1,0 +1,14 @@
+# coding: utf-8
+%h2 Персонал отделения "#{@division.name}"  
+%h4 Всего сотрудников #{@workers.size.to_s}
+.content
+  %table.data
+    %tr
+      %th Фамилия
+      %th Имя
+      %th Отчество
+    - for w in @workers
+      %tr
+        %td= w.lastname.to_utf
+        %td= w.firstname.to_utf
+        %td= w.soname.to_utf

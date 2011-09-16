@@ -5,7 +5,7 @@ class DirectionsController < ApplicationController
   before_filter :find_subblock, :only => :show_eigen_factors
 #  before_filter :find_factor, :only => :show_articles
   def index
-    @directions = Direction.order(:name)
+    @directions = Direction.order(:id)
   end
 
   def show_eigen_blocks

@@ -1,0 +1,22 @@
+# coding: utf-8
+%h2 Рейтинг направления "#{@direction.name}" за #{@period.name}
+- d_id = @values[0].division_id  
+.content
+  %table.data
+    %tr
+      %th Отделение
+      - for v in @values
+        - if v.division_id == d_id
+          %td= v.factor.factor_description.short_name
+      - d_id = 0
+      - for v in @values
+        - if v.division_id != d_id
+          - d_id = v.division_id
+          %tr
+            %td= link_to v.division.name, :action => 'show_value_changes', :period_id => @period, :direction_id => @direction, :division_id => v.division_id
+          %td= ''
+        %td= v.value
+%br
+.actions
+  = link_to 'Индексы', :action => 'show_indexes', :direction_id => @direction, :period_id => @period            
+          

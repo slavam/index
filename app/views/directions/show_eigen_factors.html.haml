@@ -6,6 +6,7 @@
     %tr
       %th Название
       %th Вес
+      %th Единица измерения
       %th Описание
     - for f in @subblock.factors
       %tr
@@ -15,9 +16,10 @@
           %td= f.factor_description.short_name
         - fw = f.factor_weights.last
         %td= fw.weight
+        %td= f.unit.name
         %td= fw.description
 %br	
 .actions
-  = link_to 'Добавить показатель', :controller => 'factors', :action => 'new_factor', :block_id => @block
+  = link_to 'Добавить показатель', :controller => 'factors', :action => 'new_factor', :subblock_id => @subblock
   %br  
   = link_to 'Изменить веса', :controller => 'factors', :action => 'edit_weights', :block_id => @block

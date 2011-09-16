@@ -1,7 +1,12 @@
 Index::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
-  resources :divisions
+  resources :divisions do
+    collection do
+      get :show_workers
+    end
+  end
+
   resources :factor_descriptions
 
   resources :directions do
@@ -22,6 +27,12 @@ Index::Application.routes.draw do
     collection do
       get :new_factor, :edit_weights
       post :save_weights, :save_updated_weights
+    end
+  end
+
+  resources :ratings do
+    collection do
+      get :get_rating_params, :show_rating, :show_indexes, :get_calc_params, :calc_rating, :show_index_changes, :show_value_changes
     end
   end
 

@@ -1,15 +1,13 @@
 %h1
   = submit
-  шаблон
+  направление
 .content
   - form_for @direction do |form|
     %table.card
       %tr
-        %th Полное название
+        %th Название
         %td= form.text_field :name
-      %tr
-        %th Сокращенное название
-        %td= form.text_field :short_name
+      
     %br
   
     = submit_tag submit

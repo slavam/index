@@ -1,0 +1,14 @@
+# coding: utf-8
+%h1 Задайте параметры для формирования рейтинга
+
+.content
+  - form_for :report, :url => { :action => "calc_rating" }, :html => {:method => "get"} do 
+    %table
+      %tr
+        %th= "Период:"
+        %td= select :rating_params, "period_id", Period.all.collect {|p| [ p.name, p.id ] }
+      %tr
+        %th= "Направление:"
+        %td= select :rating_params, "direction_id", Direction.order(:id).collect {|d| [ d.name, d.id ] }
+            
+    = submit_tag "Сформировать рейтинг"

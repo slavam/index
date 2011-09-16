@@ -1,0 +1,18 @@
+# coding: utf-8
+%h1 Изменения значений показателей "#{@curr_values[0].division.name}" за #{@period.name}
+
+.content
+  %table.data
+    %tr
+      %th Отделение
+      %th Было 
+      %th Стало
+      %th Дельта
+      - i = 0
+      - for cv in @curr_values
+        %tr
+          %td= cv.factor.factor_description.short_name
+          %td= @prev_values[i].value
+          %td= cv.value
+          %td= cv.value - @prev_values[i].value
+        - i += 1          

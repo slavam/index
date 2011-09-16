@@ -11,7 +11,7 @@ class SubblocksController < ApplicationController
     if not @subblock.save
       render :new
     else
-      redirect_to :controller => 'directions', :action => 'show_eigen_blocks', :id => params[:direction_id]
+      redirect_to :controller => 'directions', :action => 'show_eigen_subblocks', :block_id => params[:block_id]
     end
   end
   

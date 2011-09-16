@@ -1,6 +1,7 @@
 # coding: utf-8
 class FactorsController < ApplicationController
-  before_filter :find_block, :only => [:new_factor, :save_weights, :edit_weights, :save_updated_weights]
+#  before_filter :find_block, :only => [:new_factor, :save_weights, :edit_weights, :save_updated_weights]
+  before_filter :find_subblock, :only => [:new_factor, :save_weights, :edit_weights, :save_updated_weights]
   
   def show
   end
@@ -29,30 +30,31 @@ class FactorsController < ApplicationController
     total_weight += params[:new_factor][:weight].to_f
     if total_weight>1
       flash_error :weight_is_wrong
-      redirect_to :action => 'new_factor', :block_id => params[:block_id]
+      redirect_to :action => 'new_factor', :subblock_id => params[:subblock_id]
     else 
-      @factors = @block.factors
+      @factors = @subblock.factors
       if @factors.size>0
         @factors.collect { |f|
           @factor_weight = FactorWeight.new
           @factor_weight.factor_id = f.id
           @factor_weight.start_date = Time.now
           @factor_weight.weight = params[:w][f.id.to_s][:weight]
-          @factor_weight.description = params[:new_block][:description]
+          @factor_weight.description = params[:new_factor][:description]
           @factor_weight.save
         }
       end
       @factor = Factor.new
-      @factor.block_id = params[:block_id]
+      @factor.subgroup_id = params[:subblock_id]
       @factor.factor_description_id = params[:new_factor][:factor_description_id]
+      @factor.unit_id = params[:new_factor][:unit_id]
       @factor.save
       @factor_weight = FactorWeight.new
       @factor_weight.factor_id = @factor.id
       @factor_weight.weight = params[:new_factor][:weight]
       @factor_weight.start_date = Time.now
-      @factor_weight.description = params[:new_block][:description]
+      @factor_weight.description = params[:new_factor][:description]
       @factor_weight.save
-      redirect_to :controller => 'directions', :action => 'show_eigen_factors', :id => params[:block_id]
+      redirect_to :controller => 'directions', :action => 'show_eigen_factors', :subblock_id => params[:subblock_id]
     end
   end
   
@@ -66,7 +68,7 @@ class FactorsController < ApplicationController
     end
     if total_weight>1
       flash_error :weight_is_wrong
-      redirect_to :action => 'edit_weights', :block_id => params[:block_id]
+      redirect_to :action => 'edit_weights', :subblock_id => params[:subblock_id]
     else 
       @factors = @block.factors
       if @factors.size>0
@@ -96,5 +98,9 @@ class FactorsController < ApplicationController
   
   def find_block
     @block = Block.find params[:block_id]
+  end  
+
+  def find_subblock
+    @subblock = Subblock.find params[:subblock_id]
   end  
 end

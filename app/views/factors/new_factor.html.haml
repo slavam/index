@@ -1,0 +1,26 @@
+# coding: utf-8
+%h1 Новый показатель подблока "#{@subblock.name}" блока "#{@subblock.block.name}" направления "#{@subblock.block.direction.name}" 
+%h4 Примечание: сумма весов всех показателей направления должна равняться 1
+.content
+  - form_for 'factors[]', :d, :url => {:action => 'save_weights', :subblock_id => @subblock} do |form|
+    %table.data
+      %tr
+        %th Название
+        %th Вес
+        %th Единица измерения
+        %th Описание
+      - for f in @subblock.factors
+        %tr
+          %td= f.factor_description.short_name
+          - @w = f.factor_weights.last
+          %td= text_field :w, :weight, :index => f.id, :size => 5
+          %td= f.unit.name
+          %td= @w.description
+      %tr
+        %td= select :new_factor, "factor_description_id", FactorDescription.all.collect {|fd| [ fd.short_name, fd.id ] }
+        %td= text_field :new_factor, :weight, :size => 5
+        %td= select :new_factor, "unit_id", Unit.all.collect {|u| [u.name, u.id]}
+        %td= text_field :new_factor, :description, :size => 50    
+      %br	
+    = submit_tag "Сохранить"
+        
