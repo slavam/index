@@ -1,8 +1,9 @@
 # coding: utf-8
 class RatingsController < ApplicationController
-  before_filter :find_direction, :only => [:show_rating, :show_indexes, :calc_rating, :show_index_changes, :show_value_changes]
-  before_filter :find_period, :only => [:show_rating, :show_indexes, :calc_rating, :show_index_changes, :show_value_changes]
-#  before_filter :find_values, :only => [:show_changes]
+  before_filter :find_direction, :only => [:show_rating, :show_indexes, :calc_rating, :show_index_changes, 
+    :show_value_changes, :show_factor_chart, :show_index_chart]
+  before_filter :find_period, :only => [:show_rating, :show_indexes, :calc_rating, :show_index_changes, 
+    :show_value_changes, :show_factor_chart, :show_index_chart]
  
   def get_rating_params
   end
@@ -11,11 +12,29 @@ class RatingsController < ApplicationController
   end
 
   def show_rating
-    find_values @period.id, @direction.id
+    @values = find_values @period.id, @direction.id
+    @prev_period = get_prev_period(@period)
+    if @prev_period
+      @prev_values = find_values @prev_period.id, @direction.id
+    end  
   end
 
   def show_indexes
-    find_values @period.id, @direction.id
+    @values = find_values @period.id, @direction.id
+    @prev_period = get_prev_period(@period)
+    if @prev_period
+      @prev_values = find_values @prev_period.id, @direction.id
+    end  
+  end
+
+  def show_factor_chart
+    @values = Rating.where("period_id = ? and scope_id = ? and factor_id = ?", 
+      @period.id, @direction.id, params[:factor_id]).order(:division_id)
+  end
+  
+  def show_index_chart
+    @values = Rating.where("period_id = ? and scope_id = ? and factor_id = ?", 
+      @period.id, @direction.id, params[:factor_id]).order(:division_id)
   end
 
   def show_index_changes
@@ -23,7 +42,7 @@ class RatingsController < ApplicationController
       @period.id, @direction.id, params[:division_id]).order(:factor_id)
     @prev_values = Rating.where("period_id = ? and scope_id = ? and division_id = ?", 
       @period.id-1, @direction.id, params[:division_id]).order(:factor_id)
-  end
+  end 
 
   def show_value_changes
     @curr_values = Rating.where("period_id = ? and scope_id = ? and division_id = ?", 
@@ -36,8 +55,8 @@ class RatingsController < ApplicationController
     @factors = Factor.find_by_sql('
     select * from factors where subgroup_id in
       (select id from subgroups where group_id in 
-      (select id from groups where scope_id ='+params[:rating_params][:direction_id].to_s+'))') 
-    d = Direction.find params[:rating_params][:direction_id]
+      (select id from groups where scope_id ='+ params[:rating_params][:direction_id].to_s+'))') 
+#    d = Direction.find params[:rating_params][:direction_id]
     branch_id = params[:rating_params][:direction_id].to_i+1
     @divisions = Division.find_by_sql('
       select d.id id, d.code code from FIN.division d
@@ -125,6 +144,13 @@ class RatingsController < ApplicationController
 
   private
   
+  def get_prev_period curr_period
+    delta_month = curr_period.end_date.month - curr_period.start_date.month + 1
+    start_date = curr_period.start_date.months_ago(delta_month).beginning_of_month
+    end_date = curr_period.end_date.months_ago(delta_month).end_of_month
+    return Period.where('start_date=? and end_date=?', start_date, end_date).first 
+  end
+  
   def find_direction
     if params[:direction_id]
       @direction = Direction.find params[:direction_id]
@@ -142,8 +168,8 @@ class RatingsController < ApplicationController
   end
   
   def find_values period_id, direction_id
-    @values = Rating.where("period_id = ? and scope_id = ? ", 
-      period_id, direction_id).order(:division_id, :factor_id)
+    return Rating.where("period_id = ? and scope_id = ? ", 
+      period_id, direction_id).order(:division_id)
   end
   
   def get_business_efficiencies start_date, end_date, division_code
@@ -215,6 +241,9 @@ class RatingsController < ApplicationController
   
 =begin
 # a.force_encoding("CP1251").encode("UTF-8")    
+
+select * from indexes where division_id in 
+(select max(division_id) from indexes)
 
  select d.namepp,
  d.name,

@@ -32,7 +32,7 @@ Index::Application.routes.draw do
 
   resources :ratings do
     collection do
-      get :get_rating_params, :show_rating, :show_indexes, :get_calc_params, :calc_rating, :show_index_changes, :show_value_changes
+      get :get_rating_params, :show_rating, :show_indexes, :get_calc_params, :calc_rating, :show_index_changes, :show_value_changes, :show_factor_chart, :show_index_chart
     end
   end
 

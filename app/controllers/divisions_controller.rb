@@ -6,7 +6,7 @@ class DivisionsController < ApplicationController
   end
 
   def show_workers
-    @workers = Worker.select([:lastname, :firstname, :soname]).where('code_division like ?', params[:division_code]+'%')
+    @workers = Worker.select([:lastname, :firstname, :soname, :staffname]).where('code_division like ?', params[:division_code]+'%')
   end
   private
   def find_division

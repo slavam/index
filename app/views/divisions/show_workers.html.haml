@@ -7,8 +7,10 @@
       %th Фамилия
       %th Имя
       %th Отчество
+      %th Должность
     - for w in @workers
       %tr
         %td= w.lastname.to_utf
         %td= w.firstname.to_utf
         %td= w.soname.to_utf
+        %td= w.staffname.to_utf

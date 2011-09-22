@@ -5,17 +5,21 @@
   %table.data
     %tr
       %th Отделение
-      - for v in @values
+      - for v in @values.order(:division_id, :factor_id)
         - if v.division_id == d_id
-          %td= v.factor.factor_description.short_name
-      - d_id = 0
-      - for v in @values
-        - if v.division_id != d_id
-          - d_id = v.division_id
-          %tr
-            %td= link_to v.division.name, :action => 'show_index_changes', :period_id => @period, :direction_id => @direction, :division_id => v.division_id
-          %td= ''
-        %td= v.index_value
+          %th= link_to v.factor.factor_description.short_name, :action => 'show_index_chart', :period_id => @period, :direction_id => @direction, :factor_id => v.factor_id
+      %th Итоговый индекс
+    - for d in @values.select('distinct(indexes.division_id)')
+      %tr
+        - if @prev_values
+          %td= link_to d.division.name, :action => 'show_index_changes', :period_id => @period, :direction_id => @direction, :division_id => d.division_id
+        - else
+          %td= d.division.name
+        - total_index = 0
+        - for v in @values.where(:division_id => d.division_id).order(:factor_id)
+          %td= v.index_value
+          - total_index += v.index_value
+        %td= number_with_precision(total_index, :precision => 5, :separator => '.')
 %br
 .actions
   = link_to 'Рейтинг', :action => 'show_rating', :direction_id => @direction, :period_id => @period            

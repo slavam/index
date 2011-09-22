@@ -1,0 +1,57 @@
+# coding: utf-8
+%h2 Распределение показателя "#{@values[0].factor.factor_description.short_name}" направления "#{@direction.name}" за #{@period.name}
+
+%style{:type => "text/css", :media => "screen"}
+:javascript
+  $(function(){
+    new Highcharts.Chart({
+      chart: {
+        renderTo: "factor_chart",
+        defaultSeriesType: 'column'
+      },
+      title: {
+        text: "Распределение показателя"
+      },
+      xAxis: {
+        categories: #{ 
+          cat = []
+          for vv in @values do 
+            cat << vv.division.code 
+          end  
+          cat}
+      },
+      yAxis: {
+        title: {
+          text: "Значения"
+        }
+      },
+      tooltip: {
+        formatter: function(){
+          return Highcharts.numberFormat(this.y, 2);
+        }
+      },
+      series: [{
+        name: "Текущее значение",
+        data: #{ 
+          val = []
+          for vv in @values do 
+            val << vv.value 
+          end  
+          val}
+      }]
+    });
+  });
+
+%div{'id' => "factor_chart", 'style'=> "width:560px; height:300px;"}
+.content
+  %table.data
+    %tr
+      %th Отделение
+      %th Значения
+    - for v in @values
+      %tr
+        %td= v.division.name   
+        %td= v.value
+
+
+

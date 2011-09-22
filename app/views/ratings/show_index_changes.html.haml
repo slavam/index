@@ -4,7 +4,7 @@
 .content
   %table.data
     %tr
-      %th Отделение
+      %th Показатель
       %th Было 
       %th Стало
       %th Дельта
@@ -14,5 +14,65 @@
           %td= cv.factor.factor_description.short_name
           %td= @prev_values[i].index_value
           %td= cv.index_value
-          %td= cv.index_value - @prev_values[i].index_value
-        - i += 1          
+          - curr_color = 'black'
+          - if cv.index_value != @prev_values[i].index_value
+            - curr_color = cv.index_value > @prev_values[i].index_value ? 'blue' : 'red'
+            
+          %td{'style'=> "color: #{curr_color};"}= number_with_precision(cv.index_value - @prev_values[i].index_value, :precision => 5, :separator => '.')
+        - i += 1
+%style{:type => "text/css", :media => "screen"}
+:javascript
+  $(function(){
+    new Highcharts.Chart({
+        chart: {
+           renderTo: 'factor_chart',
+           margin: [50, 0, 0, 0],
+           plotBackgroundColor: 'none',
+           plotBorderWidth: 0,
+           plotShadow: false            
+        },
+        title: {
+           text: ''
+        },
+        subtitle: {
+           text: 'Внутреннее кольцо - "Было", внешнее кольцо - "Стало"'
+        },
+        tooltip: {
+           formatter: function() {
+              return '<b>'+ this.series.name +'</b><br/>'+ 
+                 this.point.name +': '+ this.percentage +' %';
+           }
+        },
+        series: [{
+          type: 'pie',
+          name: 'Было',
+          size: '45%',
+          innerSize: '20%',
+          data: #{ 
+            val = []
+            for vv in @prev_values do 
+              val << {:y => vv.index_value, :name => vv.factor.factor_description.short_name, :color => vv.factor.factor_description.color}
+            end  
+            val.to_json},
+          dataLabels: {
+             enabled: false
+          }
+        }, {
+           type: 'pie',
+           name: 'Стало',
+           innerSize: '45%',
+           data: #{ 
+            val = []
+            for vv in @curr_values do 
+              val << {:y => vv.index_value, :name => vv.factor.factor_description.short_name, :color => vv.factor.factor_description.color}  
+            end  
+            val.to_json},
+           dataLabels: {
+              enabled: true
+           }
+        }]
+     });
+  });
+- if @prev_values.minimum(:index_value) >= 0 and @curr_values.minimum(:index_value) >= 0
+  %div{'id' => "factor_chart", 'style'=> "width:600px; height:350px;"}
+                  
